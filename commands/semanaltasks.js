@@ -3,4 +3,12 @@ const Petiano = require("../petiano");
 
 petiano = new Petiano("Hallyson", "data");
 
-console.log(petiano);
+//Não tá funcionando
+module.exports = {
+    data: new SlashCommandBuilder()
+        .setName('semanaltasks')
+        .setDescription('Le as mensagens até a data especificada e cria um documento'),
+    async execute(interaction) {
+        await interaction.reply('Documento atualizado!');
+    }
+};
