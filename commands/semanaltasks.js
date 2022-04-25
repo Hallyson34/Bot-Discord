@@ -3,7 +3,7 @@ const Petiano = require("../petiano");
 
 petiano = new Petiano("Hallyson", "data");
 
-//Não tá funcionando
+
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('semanaltasks')
