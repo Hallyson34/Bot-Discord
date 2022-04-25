@@ -10,6 +10,10 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 require('dotenv').config();
 const token = process.env.DISCORD_TOKEN;
 
+//Updating commands, can comments these lines after develop
+const refreshCommands = require('./deploy-commands');
+refreshCommands;
+
 //Creating a new Collection of commands
 client.commands = new Collection();
 
