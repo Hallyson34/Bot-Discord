@@ -41,6 +41,18 @@ client.on('interactionCreate', async interaction => {
 
 	if (!command) return;
 
+	if(interaction.commandName === "semanaltasks"){
+		//Create cache for channel "atualizacao-semanal"
+		const channel = client.channels.cache.get("968146786453708890");
+		//Read 50 messages in the channel and console the amount of messages readed
+		channel.messages.fetch({ limit: 50 }).then(messages => {
+			console.log(`Received ${messages.size} messages`);
+
+			//Iterate through the messages here with the variable "messages".
+			messages.forEach(message => console.log(message.createdAt));
+		})		
+	}
+
 	try {
 		await command.execute(interaction);
 	} catch (error) {
