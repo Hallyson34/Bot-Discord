@@ -10,9 +10,9 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 require('dotenv').config();
 const token = process.env.DISCORD_TOKEN;
 
-//Updating commands, can comments these lines after develop
+//Requiring to updating commands
 const refreshCommands = require('./deploy-commands');
-refreshCommands;
+refreshCommands();
 
 //Creating a new Collection of commands
 client.commands = new Collection();
@@ -41,16 +41,9 @@ client.on('interactionCreate', async interaction => {
 
 	if (!command) return;
 
+	//When "/semanaltasks" is called, grab the cache channel and export
 	if(interaction.commandName === "semanaltasks"){
-		//Create cache for channel "atualizacao-semanal"
-		const channel = client.channels.cache.get("968146786453708890");
-		//Read 50 messages in the channel and console the amount of messages readed
-		channel.messages.fetch({ limit: 50 }).then(messages => {
-			console.log(`Received ${messages.size} messages`);
-
-			//Iterate through the messages here with the variable "messages".
-			messages.forEach(message => console.log(message.createdAt));
-		})		
+		await getCacheChannel();
 	}
 
 	try {
@@ -63,3 +56,38 @@ client.on('interactionCreate', async interaction => {
 
 // Login to Discord with your client's token
 client.login(token);
+
+//Grab cache channel, append messages to an array and export that
+async function getCacheChannel() {
+	//Create cache for channel "atualizacao-semanal"
+	const channel = await client.channels.cache.get("968146786453708890");
+
+	//Array that recieve messages objects
+	const Messages = [];
+
+	//Read 50 messages in the channel and console the amount of messages readed
+	await channel.messages.fetch({ limit: 50 }).then(messages => {
+		//only for debugging and verify quantify of messages readeds
+		console.log(`Received ${messages.size} messages`);
+
+		//Iterate through the messages here with the variable "messages".
+		messages.forEach((message) => {
+			if(!message.author.bot){
+				//Create a template object for each message and add to array Messages
+				Messages.push(new Msg(message.author, message.content, message.date));
+			}			
+		});
+	});
+
+	//export data from read messages
+	module.exports = Messages;
+}
+
+//Class that will be used to organize messages readeds
+class Msg {
+	constructor(name, content, date){
+        this.name = name;
+		this.content = content;
+        this.date = date;
+    }
+}
