@@ -1,24 +1,16 @@
 class Petiano{
-    constructor(name, date){
+    constructor(name, todo, done, date){
         this.name = name;
+        this.toDo = todo;
+        this.Done = done;
         this.date = date;
-        this.toDo = [];
-        this.done = [];
-    }
-
-    setToDo(toDos){
-        this.toDo.push(toDos);
-    }
-
-    setDone(dones){
-        this.done.push(dones);
     }
 
     getPetiano(){
         return {
-            "nome":`${this.name}`,
+            "Name":`${this.name}`,
             "ToDo":`${this.toDo}`,
-            "Done":`${this.done}`,
+            "Done":`${this.Done}`,
             "Date":`${this.date}`
         };
     }

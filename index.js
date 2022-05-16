@@ -69,12 +69,11 @@ async function getCacheChannel() {
 	await channel.messages.fetch({ limit: 50 }).then(messages => {
 		//only for debugging and verify quantify of messages readeds
 		console.log(`Received ${messages.size} messages`);
-
 		//Iterate through the messages here with the variable "messages".
 		messages.forEach((message) => {
 			if(!message.author.bot){
 				//Create a template object for each message and add to array Messages
-				Messages.push(new Msg(message.author, message.content, message.date));
+				Messages.push(new Msg(message.author, message.content, message.createdTimestamp));
 			}			
 		});
 	});
@@ -85,9 +84,9 @@ async function getCacheChannel() {
 
 //Class that will be used to organize messages readeds
 class Msg {
-	constructor(name, content, date){
-        this.name = name;
+	constructor(usr, content, data){
+        this.usr = usr;
 		this.content = content;
-        this.date = date;
+        this.data = data; 
     }
 }

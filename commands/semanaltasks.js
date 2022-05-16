@@ -1,20 +1,42 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const Petiano = require("../petiano");
 
 //Main function
 function creatingDocument(date) {
-    const Petiano = require("../petiano");
-    petiano = new Petiano("Hallyson", "data");
-    console.log(date);
 
-    messagesFiltered = filteringMessages();
+    date = date.slice(6,10) + "/" + date.slice(3,5) + "/" + date.slice(0, 2);
+
+    petianos = creatingObject(date);
+
+    //creatingJSON(petianos);
 }
 
-//Function that filter messages
-function filteringMessages(){
+//Function that creates an Array with Petiano objects 
+function creatingObject(date){
     const messages  = require("../index");
-    console.log(`1\n${messages[0].content}\n\n2${messages[1].content}\n`);
+    
+    date = new Date(date);
+    petianos = [];
 
-    return messages;
+    for(i = 0; i < messages.length; i++){
+        if(messages[i].data > date.getTime()){
+
+            username = messages[i].usr.username;
+
+            idone = messages[i].content.indexOf("Done");
+
+            todo = messages[i].content.slice(0, idone);
+
+            done = messages[i].content.slice(idone);
+
+            data = formatarData(messages[i].data);
+
+            petianos.push(new Petiano(username, todo, done, data));
+        }
+    }
+
+    return petianos;
+
 }
 
 //verify date format 
@@ -52,3 +74,16 @@ module.exports = {
         await verifyDate(interaction, date);      
     }
 };
+
+function formatarData(date){
+    
+    date = new Date(date);
+
+    const addZero = (num) => {
+        if (num < 10)
+            return "0" + num;
+        return num;
+    }
+
+    return (addZero(date.getDate()).toString() + "/" + addZero(date.getMonth() + 1).toString() + "/" + date.getFullYear().toString());
+}
