@@ -66,12 +66,13 @@ async function getCacheChannel() {
 	const Messages = [];
 
 	//Read 50 messages in the channel and console the amount of messages readed
-	await channel.messages.fetch({ limit: 50 }).then(messages => {
+	await channel.messages.fetch({ limit: 30 }).then(messages => {
 		//Iterate through the messages here with the variable "messages".
-		messages.forEach((message) => {
+		messages.forEach( async(message) => {
 			if(!message.author.bot){
+				let author = await getAuthorDisplayName(message);
 				//Create a template object for each message and add to array Messages
-				Messages.push(new Msg(message.author, message.content, message.createdTimestamp));
+				Messages.push(new Msg(author, message.content, message.createdTimestamp));
 			}			
 		});
 	});
@@ -79,6 +80,11 @@ async function getCacheChannel() {
 	//export data from read messages
 	module.exports = Messages;
 }
+
+const getAuthorDisplayName = async (msg) => {
+	const member = await msg.guild.members.fetch(msg.author);
+	return member ? member.nickname : msg.author.username;
+  }
 
 //Class that will be used to organize messages readeds
 class Msg {

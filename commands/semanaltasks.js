@@ -1,7 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const fsPromises = require('fs').promises;
-const path = require('path');
-const Petiano = require("../petiano");
+const addSheet = require('../spreadsheets');
 
 //Export command created for use through the BOT
 module.exports = {
@@ -18,20 +16,24 @@ module.exports = {
     }
 };
 
-//verify date format recieved by user
+//verify date format recieved by user and call main function
 async function verifyDate(interaction, date){
     
     try {
         //pattern date
         const regex_date = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
 
+        //verify pattern date
         if(!regex_date.test(date) || parseInt(date.slice(0,2)) > 31 || parseInt(date.slice(3,5)) > 12)
             throw new Error('formato de data inválido!');    
-        else
-            //call main function
-            await creatingDocument(date);
 
-        await interaction.reply('Documento atualizado!');
+        //format date and filter messages
+        else{
+            date = date.slice(6,10) + "/" + date.slice(3,5) + "/" + date.slice(0, 2);
+            await filteringMessages(date);
+        }
+
+        await interaction.reply('Planilha atualizada!');
     
 
     } catch (err) {
@@ -41,42 +43,34 @@ async function verifyDate(interaction, date){
     
 }
 
-//Main function
-async function creatingDocument(date) {
-
-    date = date.slice(6,10) + "/" + date.slice(3,5) + "/" + date.slice(0, 2);
-
-    const petianos = await creatingObject(date);
-
-    creatingJSON(petianos);
-}
-
-//Function that creates an Array with Petiano objects 
-function creatingObject(date){
-    const messages  = require("../index");
+//Function that filter messages before add to sheet
+function filteringMessages(date){
+    const messages = require("../index");
     
     date = new Date(date);
-    let petianos = [];
 
     for(i = 0; i < messages.length; i++){
         if(messages[i].data > date.getTime()){
 
-            username = messages[i].usr.username;
+            let username = messages[i].usr;
 
-            idone = messages[i].content.indexOf("Done");
+            let itodo = messages[i].content.indexOf("To Do");
 
-            todo = messages[i].content.slice(0, idone);
+            let idone = messages[i].content.indexOf("Done");
 
-            done = messages[i].content.slice(idone);
+            if(itodo > idone){
+                var done = messages[i].content.slice(0, itodo);
+                var todo = messages[i].content.slice(itodo);
+            } else {
+                var todo = messages[i].content.slice(0, idone);
+                var done = messages[i].content.slice(idone);
+            }
 
-            data = formatarData(messages[i].data);
+            let data = formatarData(messages[i].data);
 
-            petianos.push(new Petiano(username, todo, done, data));
+            addSheet(username, todo, done, data);
         }
     }
-
-    return petianos;
-
 }
 
 //Format date like that: Ex: 05/03/2022
@@ -92,18 +86,3 @@ function formatarData(date){
 
     return (addZero(date.getDate()).toString() + "/" + addZero(date.getMonth() + 1).toString() + "/" + date.getFullYear().toString());
 }
-
-//Recieve an object and update JSON file(petianos.json)
-async function creatingJSON(obj){
-    try{
-        //Updating file that contains petianos
-        await fsPromises.writeFile(
-            path.join(__dirname, '..', 'petianos.json'),
-            JSON.stringify(obj)
-        );
-    } catch(err){
-        console.log(err);
-        await interaction.reply("Erro na atualização do arquivo");
-    }
-}
-
