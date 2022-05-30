@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const addSheet = require('../spreadsheets');
+const addSheet = require('../Drive/spreadsheets');
 
 //Export command created for use through the BOT
 module.exports = {

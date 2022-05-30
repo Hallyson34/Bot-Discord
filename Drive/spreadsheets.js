@@ -1,5 +1,5 @@
 const { GoogleSpreadsheet } = require('google-spreadsheet');
-const credentials = require('./credentials.json');
+const credentials = require('../credentials.json');
 
 //id geted by the url of spreadsheet
 const docID = '1LQ-vMY0QhYFbKaTv7DE_NT6IITX6FeDLxoYytnOPj30';
