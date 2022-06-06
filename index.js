@@ -66,7 +66,7 @@ async function getCacheChannel() {
 	const Messages = [];
 
 	//Read 50 messages in the channel and console the amount of messages readed
-	await channel.messages.fetch({ limit: 30 }).then(messages => {
+	await channel.messages.fetch({ limit: 100 }).then(async (messages) => {
 		//Iterate through the messages here with the variable "messages".
 		messages.forEach( async(message) => {
 			if(!message.author.bot){

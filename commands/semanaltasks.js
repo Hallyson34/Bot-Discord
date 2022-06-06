@@ -16,9 +16,11 @@ module.exports = {
     }
 };
 
-//verify date format recieved by user and call main function
+//verify date format recieved by user
 async function verifyDate(interaction, date){
     
+    await interaction.deferReply();
+
     try {
         //pattern date
         const regex_date = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
@@ -33,18 +35,17 @@ async function verifyDate(interaction, date){
             await filteringMessages(date);
         }
 
-        await interaction.reply('Planilha atualizada!');
-    
+       await interaction.editReply("Planilha atualizada!");
 
     } catch (err) {
         console.log(err);
-        await interaction.reply("Formato de data inválido");
+        await interaction.editReply("Formato de data inválido");
     }
     
 }
 
 //Function that filter messages before add to sheet
-function filteringMessages(date){
+async function filteringMessages(date){
     const messages = require("../index");
     
     date = new Date(date);
@@ -68,7 +69,7 @@ function filteringMessages(date){
 
             let data = formatarData(messages[i].data);
 
-            addSheet(username, todo, done, data);
+            await addSheet(username, todo, done, data);
         }
     }
 }
